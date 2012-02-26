@@ -1587,6 +1587,11 @@
 
       p->glyph_enc = _bdf_atol( p->list.field[1], 0, 10 );
 
+      /* Normalize negative encoding values.  The specification only */
+      /* allows -1, but we can be more generous here.                */
+      if ( p->glyph_enc < -1 )
+        p->glyph_enc = -1;
+
       /* Check that the encoding is in the range [0,65536] because */
       /* otherwise p->have (a bitmap with static size) overflows.  */
       if ( p->glyph_enc > 0                               &&
