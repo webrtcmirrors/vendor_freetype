@@ -1602,8 +1602,9 @@
 
       /* Check that the encoding is in the range [0,65536] because */
       /* otherwise p->have (a bitmap with static size) overflows.  */
-      if ( p->glyph_enc > 0                               &&
-           (size_t)p->glyph_enc >= sizeof ( p->have ) * 8 )
+      if ( p->glyph_enc > 0                                      &&
+           (size_t)p->glyph_enc >= sizeof ( p->have ) /
+                                   sizeof ( unsigned long ) * 32 )
       {
         error = BDF_Err_Invalid_File_Format;
         goto Exit;
