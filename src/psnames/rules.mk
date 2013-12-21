@@ -46,7 +46,7 @@ PSNAMES_DRV_OBJ_S := $(OBJ_DIR)/psnames.$O
 
 # PSNames driver source file for single build
 #
-PSNAMES_DRV_SRC_S := $(PSNAMES_DIR)/psmodule.c
+PSNAMES_DRV_SRC_S := $(PSNAMES_DIR)/psnames.c
 
 
 # PSNames driver - single object
