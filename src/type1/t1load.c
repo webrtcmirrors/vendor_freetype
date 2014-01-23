@@ -1101,7 +1101,7 @@
 
     result = T1_ToFixedArray( parser, 6, temp, 3 );
 
-    if ( result < 0 )
+    if ( result < 6 )
     {
       parser->root.error = T1_Err_Invalid_File_Format;
       return;
