@@ -1269,6 +1269,13 @@
           {
             charcode = (FT_Int)T1_ToInt( parser );
             T1_Skip_Spaces( parser );
+
+            /* protect against invalid charcode */
+            if ( cur == parser->root.cursor )
+            {
+              parser->root.error = FT_Err_Unknown_File_Format;
+              return;
+            }
           }
 
           cur = parser->root.cursor;
