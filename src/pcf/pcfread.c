@@ -151,6 +151,21 @@ THE SOFTWARE.
         break;
     }
 
+    /* we now check whether the `size' and `offset' values are reasonable: */
+    /* `offset' + `size' must not exceed the stream size                   */
+    tables = face->toc.tables;
+    for ( n = 0; n < toc->count; n++ )
+    {
+      /* we need two checks to avoid overflow */
+      if ( ( tables->size   > stream->size                ) ||
+           ( tables->offset > stream->size - tables->size ) )
+      {
+        error = PCF_Err_Invalid_Table;
+        goto Exit;
+      }
+      tables++;
+    }
+
 #ifdef FT_DEBUG_LEVEL_TRACE
 
     {
