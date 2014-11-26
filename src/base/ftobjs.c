@@ -1566,8 +1566,10 @@
        */
       FT_TRACE4(( "                 POST fragment #%d: length=0x%08x\n",
                   i, temp));
-      if ( 0x7FFFFFFFUL < temp )
+      if ( 0x7FFFFFFFUL < temp || pfb_len + temp + 6 < pfb_len )
       {
+        FT_TRACE2(( "             too long fragment length makes"
+                    " pfb_len confused: temp=0x%08x\n", temp ));
         error = FT_Err_Invalid_Offset;
         goto Exit;
       }
@@ -1580,8 +1582,7 @@
                  resource_cnt, pfb_len + 2));
     if ( pfb_len + 2 < 6 ) {
       FT_TRACE2(( "             too long fragment length makes"
-                  " pfb_len confused: 0x%08x\n",
-                  pfb_len ));
+                  " pfb_len confused: pfb_len=0x%08x\n", pfb_len ));
       error = FT_Err_Array_Too_Large;
       goto Exit;
     }
