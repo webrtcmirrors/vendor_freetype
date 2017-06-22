@@ -47,8 +47,9 @@
 #include "psintrp.h"
 
 #include "pserror.h"
-#include "psobjs.h"  /* for cff_random */
 
+#include "psobjs.h"   /* for cff_random */
+#include "t1decode.h" /* for t1operator_seac */
 
   /*************************************************************************/
   /*                                                                       */
@@ -1258,11 +1259,11 @@
                     else
                     {
                       return t1operator_seac( decoder,
-                                              top[0],
+                                              top[0], /* FT_Pos */
                                               top[1],
                                               top[2],
-                                              Fix2Int( top[3] ),
-                                              Fix2Int( top[4] ) );
+                                              Fix2Int( cf2_stack_popFixed( opStack ) ), /* FT_Int */
+                                              Fix2Int( cf2_stack_popFixed( opStack ) ));
                     }
                   }
                   break;
