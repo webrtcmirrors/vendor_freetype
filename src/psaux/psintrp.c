@@ -490,8 +490,11 @@
     CF2_Fixed  nominalWidthX = cf2_getNominalWidthX( decoder );
 
     /* Stuff for Type 1 */
-    FT_Int     known_othersubr_result_cnt   = 0;
+    FT_Int     known_othersubr_result_cnt = 0;
     FT_Bool    large_int;
+#define PS_STORAGE_SIZE 3
+    CF2_F16Dot16  results[PS_STORAGE_SIZE];   /* for othersubr results */
+    FT_Int        result_cnt = 0;
     
     /* save this for hinting seac accents */
     CF2_Fixed  hintOriginY = curY;
@@ -500,10 +503,7 @@
     FT_UInt    stackSize;
     FT_Byte    op1;                       /* first opcode byte */
 
-#define PS_STORAGE_SIZE 3
     CF2_F16Dot16  storage[CF2_STORAGE_SIZE];    /* for `put' and `get' */
-    CF2_F16Dot16  results[PS_STORAGE_SIZE];   /* for othersubr results */
-    FT_Int        result_cnt = 0;
 
     /* instruction limit; 20,000,000 matches Avalon */
     FT_UInt32  instructionLimit = 20000000UL;
@@ -1479,7 +1479,7 @@
 
                     opIdx += count - arg_cnt;
 
-                    known_othersubr_result_cnt   = 0;
+                    known_othersubr_result_cnt = 0;
                     result_cnt = 0;
 
                     /* XXX TODO: The checks to `arg_count == <whatever>'       */
@@ -1509,14 +1509,13 @@
                       {
                         FT_ERROR(( "cf2_interpT2CharString (Type 1 mode):"
                                    " unexpected flex end\n" ));
-                        goto Syntax_Error;
+                        lastError = FT_THROW( Invalid_Glyph_Format );
+                        goto exit;
                       }
 
                       /* the two `results' are popped by the following setcurrentpoint */
-                      results[result_cnt + 0] = x;
-                      results[result_cnt + 1] = y;
-
-                      result_cnt += 2;
+                      cf2_stack_pushFixed( opStack, curX );
+                      cf2_stack_pushFixed( opStack, curY );
                       known_othersubr_result_cnt = 2;
                       break;
 
@@ -1524,9 +1523,9 @@
                       if ( arg_cnt != 0 )
                         goto Unexpected_OtherSubr;
 
-                      if ( FT_SET_ERROR( t1_builder_start_point( builder, x, y ) ) ||
+                      if ( FT_SET_ERROR( t1_builder_start_point( builder, curX, curY ) ) ||
                            FT_SET_ERROR( t1_builder_check_points( builder, 6 ) )   )
-                        goto Fail;
+                        goto exit;
 
                       decoder->flex_state        = 1;
                       decoder->num_flex_vectors  = 0;
@@ -1565,8 +1564,8 @@
                         }
 
                         t1_builder_add_point( builder,
-                                              x,
-                                              y,
+                                              curX,
+                                              curY,
                                               (FT_Byte)( idx == 3 || idx == 6 ) );
                       }
                     }
@@ -1578,6 +1577,8 @@
 
                       cf2_arrstack_clear( &vStemHintArray );
                       cf2_arrstack_clear( &hStemHintArray );
+
+                      known_othersubr_result_cnt = 1;
                       break;
 
                     case 12:
@@ -1594,8 +1595,8 @@
                     {
                       PS_Blend  blend = decoder->blend;
                       FT_UInt   num_points, nn, mm;
-                      FT_Long*  delta;
-                      FT_Long*  values;
+                      CF2_UInt  delta;
+                      CF2_UInt  values;
 
 
                       if ( !blend )
@@ -1631,20 +1632,22 @@
                       /* I guess that's why it's written in this `compact'     */
                       /* form.                                                 */
                       /*                                                       */
-                      delta  = top + num_points;
-                      values = top;
+                      delta  = opIdx + num_points;
+                      values = opIdx;
                       for ( nn = 0; nn < num_points; nn++ )
                       {
-                        FT_Long  tmp = values[0];
+                        CF2_Fixed  tmp = cf2_stack_getReal( opStack, values );
 
 
                         for ( mm = 1; mm < blend->num_designs; mm++ )
-                          tmp = ADD_LONG( tmp,
-                                          FT_MulFix( *delta++,
-                                                     blend->weight_vector[mm] ) );
+                          tmp = ADD_INT32( tmp,
+                                           FT_MulFix( cf2_stack_getReal( opStack, delta++ ),
+                                                      blend->weight_vector[mm] ) );
 
-                        *values++ = tmp;
+                        cf2_stack_setReal( opStack, values++, tmp );
                       }
+                      cf2_stack_pop( opStack,
+                                     arg_cnt - num_points );
 
                       known_othersubr_result_cnt = (FT_Int)num_points;
                       break;
@@ -1691,6 +1694,7 @@
                       cf2_stack_pushFixed( opStack,
                                            ADD_INT32( summand1,
                                                       summand2 ) );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1709,6 +1713,7 @@
 
                       cf2_stack_pushFixed( opStack,
                                            SUB_INT32( minuend, subtrahend ) );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1727,6 +1732,7 @@
 
                       cf2_stack_pushFixed( opStack,
                                            FT_MulFix( factor1, factor2 ) );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1748,6 +1754,7 @@
 
                       cf2_stack_pushFixed( opStack,
                                            FT_DivFix( dividend, divisor ) );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1790,6 +1797,7 @@
 
                       cf2_stack_pushFixed( opStack,
                                            decoder->buildchar[idx] );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1822,6 +1830,7 @@
 
                       cf2_stack_pushFixed( opStack,
                                            cond1 <= cond2 ? arg1 : arg2 );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1843,6 +1852,7 @@
                         cff_random( decoder->current_subfont->random );
 
                       cf2_stack_pushFixed( opStack, r );
+                      known_othersubr_result_cnt = 1;
                     }
                     break;
 
@@ -1857,6 +1867,8 @@
 
                         /* Store the unused args for this unhandled OtherSubr */
 
+                        if ( arg_cnt > PS_STORAGE_SIZE )
+                          arg_cnt = PS_STORAGE_SIZE;
                         result_cnt = arg_cnt;
 
                         for ( i = 1; i <= arg_cnt; i++ )
