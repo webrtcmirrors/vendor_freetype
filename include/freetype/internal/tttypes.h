@@ -1507,6 +1507,7 @@ FT_BEGIN_HEADER
     FT_ULong              glyf_offset;    /* since 2.7.1 */
 
     FT_Bool               is_cff2;        /* since 2.7.1 */
+    FT_Bool               is_t1;          /*  */
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
     FT_Bool               doblend;

@@ -528,6 +528,8 @@
     }
     face->psaux = psaux;
 
+    face->is_t1 = 0;
+
     FT_FACE_FIND_GLOBAL_SERVICE( face, cffload, CFF_LOAD );
 
     FT_TRACE2(( "CFF driver\n" ));
