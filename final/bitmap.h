@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <ft2build.h>
 #include "murmur3.h"            // MurmurHash3_x64_128 header file
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include FT_FREETYPE_H

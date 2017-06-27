@@ -98,11 +98,6 @@ int main (int argc, char const *argv[])
 
 	slot = face->glyph;
 
-    struct stat st = {0};
-    if (stat("/some/directory", &st) == -1) {
-        mkdir("/some/directory", 0700);
-    }
-
 	FILE* fp;
 
 	sprintf(name,"./hashes/%s_%d_%s.hash",font_file,

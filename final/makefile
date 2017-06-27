@@ -1,5 +1,3 @@
-# Define required macros here
-
 SHELL = /bin/sh
 
 SRC = hash_to_file.c bitmap.c murmur3.c 
@@ -10,7 +8,7 @@ CC = gcc
 INCLUDE = -I /usr/local/include/freetype2/ 
 LIBS = -lfreetype
 
-DPI = 100
+DPI = 72
 
 hash:$(SRC)
 	$(CC) $(CFLAGS) $(INCLUDE) -DDPI=$(DPI) -o $@  $(SRC) $(OBJS) $(LIBS)
