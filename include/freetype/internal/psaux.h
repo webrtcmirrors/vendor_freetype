@@ -1000,7 +1000,6 @@ FT_BEGIN_HEADER
   typedef void
   (*CFF_Builder_Close_Contour_Func)( CFF_Builder*  builder );
 
-  /* static */
   typedef FT_Error
   (*CFF_Builder_Add_Contour_Func)( CFF_Builder*  builder );
 
@@ -1008,7 +1007,6 @@ FT_BEGIN_HEADER
 
   typedef struct  CFF_Builder_FuncsRec_
   {
-    /* static */
     void
     (*init)( CFF_Builder*   builder,
              TT_Face        face,
@@ -1016,7 +1014,6 @@ FT_BEGIN_HEADER
              CFF_GlyphSlot  glyph,
              FT_Bool        hinting );
 
-    /* static */
     void
     (*done)( CFF_Builder*  builder );
 
