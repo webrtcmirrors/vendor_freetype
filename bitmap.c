@@ -32,7 +32,7 @@ int Get_Padding( FT_Bitmap*	bitmap ){
 	int rem;
 	if (bitmap->pixel_mode == 6)
 	{
-		rem = ( 3 * bitmap->width ) % 4;
+        rem = ( 3 * bitmap->width ) % 4;
 	}else{
 		rem = ( bitmap->width ) % 4;
 	}
