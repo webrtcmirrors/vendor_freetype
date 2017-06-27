@@ -964,7 +964,7 @@
           FT_TRACE4(( " closepath" ));
 
           /* if there is no path, `closepath' is a no-op */
-          t1_builder_close_contour( font->decoder->builder );
+          ps_builder_close_contour( &font->decoder->builder );
 
           haveWidth = TRUE;
         }
@@ -1309,11 +1309,14 @@
                       FT_TRACE4(( " unknown op (12, %d)\n", op2 ));
                     else
                     {
-                      CF2_Fixed  lsb_x, lsb_y;
+                      CF2_Fixed    lsb_x, lsb_y;
+                      PS_Builder*  builder;
 
 
                       FT_TRACE4(( " sbw" ));
 
+                      builder = &font->decoder->builder;
+                      
                       builder->advance.y = cf2_stack_popFixed( opStack );
                       builder->advance.x = cf2_stack_popFixed( opStack );
 
@@ -2172,11 +2175,14 @@
         }
         else
         {
-          CF2_Fixed  lsb_x;
+          CF2_Fixed    lsb_x;
+          PS_Builder*  builder;
 
 
           FT_TRACE4(( " hsbw" ));
 
+          builder = &font->decoder->builder;
+          
           builder->advance.x = cf2_stack_popFixed( opStack );
           builder->advance.y = 0;
 
