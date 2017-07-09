@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+Use the "new" folder.
+
+
+>>>>>>> 4f5f083dc68dc6f0896e8da529590e88101c3c19
 To compile and execute
 
 gcc example1.c ksvsk.c murmur3.c -Wall -I /usr/local/include/freetype2/ -lfreetype -o example1 
