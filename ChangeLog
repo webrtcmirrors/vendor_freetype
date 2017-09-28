@@ -1,3 +1,9 @@
+2017-09-28  Ben Wagner  <bungeman@google.com>
+
+	[truetype] Really, really fix #52082.
+
+	* src/truetype/ttinterp.c (Ins_MDRP): Correct conditional.
+
 2017-09-24  Jonathan Kew  <jfkthame@gmail.com>
 
 	[sfnt] Fix `premultiply_data' (#52092).
