@@ -93,6 +93,37 @@ FT_BEGIN_HEADER
 #define  VFINST_PRE           247
 #define  VFINST_POST          248
 
+  typedef struct s_vf_char_packet
+  {
+    UINT4         pl;
+    UINT4         cc;
+    UINT4         tfm;
+    unsigned char *dvi;
+  }s_vf_char_packet  *VF_CHAR_PACKET;
+
+  typedef struct s_vf_subfont
+  {
+    UINT4         k;
+    UINT4         s;
+    UINT4         d;
+    UINT4         a;
+    UINT4         l;
+    char          *n;
+    int           font_id;  /* font id in VFlib */
+    struct s_vf_subfont *next;
+  }s_vf_subfont  *VF_SUBFONT;
+
+  struct s_vf_dvi_stack
+  {
+    long    h, v, w, x, y, z;
+    int     f;
+    int                    font_id;
+    struct s_vf_dvi_stack  *next;
+  };
+  typedef struct s_vf_dvi_stack  *VF_DVI_STACK;
+
+#define   STACK(X)     dvi_stack->next->X
+
 
 FT_END_HEADER
 

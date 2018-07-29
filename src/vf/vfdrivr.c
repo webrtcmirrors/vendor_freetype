@@ -135,7 +135,7 @@
   }
 
 
-   FT_CALLBACK_TABLE_DEF
+  FT_CALLBACK_TABLE_DEF
   const FT_Driver_ClassRec  vf_driver_class =
   {
     {
